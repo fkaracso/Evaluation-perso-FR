@@ -623,110 +623,12 @@
                 background-color: white !important;
             }
             
-            /* CORRECTION CRITIQUE : AFFICHAGE DES RÉPONSES COCHÉES EN IMPRESSION */
-            /* Style pour les radios dans la grille compacte */
-            .compact-option input[type="radio"] {
-                -webkit-appearance: none;
-                appearance: none;
-                width: 14px;
-                height: 14px;
-                border: 1px solid #999;
-                border-radius: 2px;
-                display: inline-block;
-                position: relative;
-                background: white;
-            }
+            /* CORRECTION CRITIQUE : AFFICHAGE DES RÉPONSES COCHÉES EN IMPRESSION (Utilisation de ✓) */
             
-            .compact-option input[type="radio"]:checked {
-                background-color: #f8f9fa;
-                border-color: #2c3e50;
-            }
-            
-            .compact-option input[type="radio"]:checked::after {
-                content: "●";
-                display: block;
-                text-align: center;
-                font-weight: bold;
-                color: #2c3e50;
-                font-size: 12px;
-                line-height: 12px;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 100%;
-                height: 100%;
-            }
-            
-            /* Style pour les radios dans la version mobile */
-            .mobile-option input[type="radio"] {
-                -webkit-appearance: none;
-                appearance: none;
-                width: 18px;
-                height: 18px;
-                border: 1px solid #999;
-                border-radius: 2px;
-                display: inline-block;
-                position: relative;
-                background: white;
-            }
-            
-            .mobile-option input[type="radio"]:checked {
-                background-color: #f8f9fa;
-                border-color: #2c3e50;
-            }
-            
-            .mobile-option input[type="radio"]:checked::after {
-                content: "●";
-                display: block;
-                text-align: center;
-                font-weight: bold;
-                color: #2c3e50;
-                font-size: 14px;
-                line-height: 16px;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 100%;
-                height: 100%;
-            }
-            
-            /* Style pour les radios horizontales */
-            .radio-option-horizontal input[type="radio"] {
-                -webkit-appearance: none;
-                appearance: none;
-                width: 14px;
-                height: 14px;
-                border: 1px solid #999;
-                border-radius: 2px;
-                display: inline-block;
-                position: relative;
-                background: white;
-            }
-            
-            .radio-option-horizontal input[type="radio"]:checked {
-                background-color: #f8f9fa;
-                border-color: #2c3e50;
-            }
-            
-            .radio-option-horizontal input[type="radio"]:checked::after {
-                content: "●";
-                display: block;
-                text-align: center;
-                font-weight: bold;
-                color: #2c3e50;
-                font-size: 12px;
-                line-height: 12px;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 100%;
-                height: 100%;
-            }
-            
-            /* Style pour les checkboxes */
+            /* Styles de base pour rendre les radios/checkboxes visibles lors de l'impression */
+            .compact-option input[type="radio"],
+            .mobile-option input[type="radio"],
+            .radio-option-horizontal input[type="radio"],
             .checkbox-option input[type="checkbox"] {
                 -webkit-appearance: none;
                 appearance: none;
@@ -737,21 +639,50 @@
                 display: inline-block;
                 position: relative;
                 background: white;
+                margin: 0;
             }
-            
+
+            /* Augmenter la taille pour la version mobile */
+            .mobile-option input[type="radio"] {
+                width: 18px;
+                height: 18px;
+            }
+
+            /* Style des éléments COCHÉS avec le checkmark (✓) */
+            .compact-option input[type="radio"]:checked,
+            .mobile-option input[type="radio"]:checked,
+            .radio-option-horizontal input[type="radio"]:checked,
             .checkbox-option input[type="checkbox"]:checked {
-                background-color: #f8f9fa;
+                background-color: #f0f0f0; /* Léger fond gris pour indiquer le coche */
                 border-color: #2c3e50;
             }
             
+            .compact-option input[type="radio"]:checked::after,
+            .radio-option-horizontal input[type="radio"]:checked::after,
             .checkbox-option input[type="checkbox"]:checked::after {
-                content: "●";
+                content: "✓"; /* Correction: utilisation du checkmark */
                 display: block;
                 text-align: center;
                 font-weight: bold;
                 color: #2c3e50;
-                font-size: 12px;
-                line-height: 12px;
+                font-size: 16px; /* Taille augmentée pour le checkmark */
+                line-height: 12px; /* Ajustement de la hauteur de ligne */
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 100%;
+                height: 100%;
+            }
+            
+            .mobile-option input[type="radio"]:checked::after {
+                content: "✓"; /* Correction: utilisation du checkmark */
+                display: block;
+                text-align: center;
+                font-weight: bold;
+                color: #2c3e50;
+                font-size: 20px; /* Taille augmentée pour la version mobile */
+                line-height: 16px; /* Ajustement de la hauteur de ligne */
                 position: absolute;
                 top: 50%;
                 left: 50%;
@@ -2177,7 +2108,7 @@
         }
         
         // CORRECTION BUG MOBILE : Synchronisation Mobile <-> Desktop
-        // Version corrigée : Gère les noms différents (q1 vs q1_mobile) pour éviter le conflit
+        // Gère les noms différents (q1 vs q1_mobile) pour éviter le conflit de nom
         function setupRadioSync() {
             // 1. Écouter les changements sur les radios MOBILE
             document.querySelectorAll('.mobile-option input[type="radio"]').forEach(mobileRadio => {
@@ -2199,6 +2130,15 @@
                     }
                 });
             });
+            
+            // Pour les utilisateurs qui sont sur Desktop mais utilisent quand même les radios de la grille compacte
+            document.querySelectorAll('.compact-option input[type="radio"]').forEach(desktopRadio => {
+                desktopRadio.addEventListener('change', function() {
+                    if (this.checked) {
+                        updateScores();
+                    }
+                });
+            });
         }
 
         // Initialisation
@@ -2213,11 +2153,14 @@
             setupRadioSync();
             
             // Mise à jour des scores sur changement (pour les checkboxes et autres inputs)
-            const allInputs = document.querySelectorAll('input[type="checkbox"], textarea, input[type="text"], input[type="number"], .compact-option input[type="radio"]');
+            const allInputs = document.querySelectorAll('input[type="checkbox"], textarea, input[type="text"], input[type="number"]');
             allInputs.forEach(input => {
-                input.addEventListener('change', function() {
-                    updateScores();
-                });
+                // On ajoute un écouteur sur les autres inputs qui ne sont pas des radios de questions
+                if (!input.name.startsWith('q') && !input.name.endsWith('_mobile')) {
+                    input.addEventListener('change', function() {
+                        updateScores();
+                    });
+                }
             });
             
             // Initialiser les scores
@@ -2229,8 +2172,7 @@
             const categoryScores = [];
             
             categories.forEach(category => {
-                // Cette fonction continue de chercher 'q1', 'q2' etc. (Version Desktop)
-                // C'est parfait car notre script de sync met à jour ces champs cachés quand on clique sur mobile
+                // Cette fonction utilise les noms de question standard ('q1', 'q2' etc.)
                 const score = calculateCategoryScore(category.questions);
                 const percentage = Math.round((score / category.maxScore) * 100);
                 totalScore += score;
@@ -2243,7 +2185,7 @@
                 });
             });
             
-            // Tri par pourcentage CROISSANT (plus bas en premier)
+            // Tri par pourcentage CROISSANT (plus bas en premier pour l'affichage)
             categoryScores.sort((a, b) => a.percentage - b.percentage);
             
             const totalMaxScore = 90;
@@ -2257,6 +2199,7 @@
         function calculateCategoryScore(questionNames) {
             let score = 0;
             questionNames.forEach(questionName => {
+                // On utilise les noms de la version desktop ('q1', 'q2'...) qui sont synchronisés par le script
                 const selectedRadio = document.querySelector(`input[name="${questionName}"]:checked`);
                 if (selectedRadio) score += parseInt(selectedRadio.value);
             });
